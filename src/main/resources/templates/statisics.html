@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center text-primary">📄 Document Statistics Dashboard</h2>
+        
+        <div class="row justify-content-center">
+            <!-- Total Documents Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total Documents</h5>
+                        <h1 class="card-text fw-bold text-success" th:text="${totalDocs}">0</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Chart -->
+        <div class="card mt-5 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3 text-center">Documents Uploaded Over Time</h5>
+                <canvas id="statsChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Chart Script -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const labels = /*[[${chartLabels}]]*/ ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        const chartData = /*[[${chartData}]]*/ [12, 19, 3, 5, 2, 3];
+        
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Documents Uploaded',
+                    data: chartData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgb(75, 192, 192)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

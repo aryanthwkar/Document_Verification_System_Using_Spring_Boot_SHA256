@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Advanced Document Search</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f6f4ff, #fdfbff);
+      color: #333;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #6d28d9;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 2rem;
+      text-shadow: 1px 1px 2px rgba(109, 40, 217, 0.15);
+    }
+
+    form {
+      background: #ffffff;
+      padding: 25px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(109, 40, 217, 0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #5b21b6;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1.5px solid #ddd6fe;
+      border-radius: 8px;
+      background: #f9f8ff;
+      color: #4b5563;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+    }
+
+    button {
+      margin-top: 20px;
+      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(139, 92, 246, 0.3);
+    }
+
+    table {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 900px;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.1);
+    }
+
+    th, td {
+      padding: 14px 18px;
+      border-bottom: 1px solid #ede9fe;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: #ede9fe;
+      color: #4c1d95;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover td {
+      background: #f5f3ff;
+    }
+
+    td {
+      color: #374151;
+    }
+
+    @media (max-width: 768px) {
+      form, table {
+        width: 95%;
+      }
+
+      th, td {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Advanced Document Search</h1>
+
+  <form th:action="@{/admin/search}" method="get">
+    <label>Document ID</label>
+    <input type="text" name="id" placeholder="Enter document ID">
+
+    <label>Unique Key</label>
+    <input type="text" name="uniqueKey" placeholder="Enter unique key">
+
+    <label>File Hash (SHA-256)</label>
+    <input type="text" name="fileHash" placeholder="Enter file hash">
+
+    <button type="submit">Search</button>
+  </form>
+
+  <table th:if="${documents}">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>File Name</th>
+        <th>Unique Key</th>
+        <th>Upload Time</th>
+        <th>File Hash</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="doc : ${documents}">
+        <td th:text="${doc.id}"></td>
+        <td th:text="${doc.fileName}"></td>
+        <td th:text="${doc.uniqueKey}"></td>
+        <td th:text="${#temporals.format(doc.uploadTime, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${doc.fileHash}"></td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Documents - Verification System</title>
+    <style>
+          :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #e74c3c;
+            --light-bg: #ecf0f1;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light-bg);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .header {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--white);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid #ddd;
+        }
+
+        .back-button:hover {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .upload-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .upload-area {
+            border: 2px dashed #bdc3c7;
+            border-radius: var(--border-radius);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--light-bg);
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--accent-color);
+            background: #e8f4fd;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: var(--text-dark);
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .browse-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .browse-button:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .upload-button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--success-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-button:hover:not(:disabled) {
+            background: #219652;
+            transform: translateY(-1px);
+        }
+
+        .upload-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .file-info {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .selected-file {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--white);
+            border-radius: 6px;
+            border-left: 4px solid var(--success-color);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .file-details {
+            flex-grow: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .file-size {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .verification-key {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="back-button">← Back to Dashboard</a>
+        <h1 class="page-title">Upload Documents</h1>
+        <p class="page-subtitle">Upload documents to generate unique verification keys</p>
+    </div>
+
+    <div class="upload-card">
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success">
+            <strong>Success:</strong> <span th:text="${success}"></span>
+            <div th:if="${verificationKey}" class="verification-key" style="margin-top: 0.5rem;">
+                Verification Key: <span th:text="${verificationKey}"></span>
+            </div>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <strong>Error:</strong> <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/upload}" method="post" enctype="multipart/form-data" id="uploadForm">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Select files to upload</div>
+                <div class="upload-subtext">Drag & drop files or click to browse</div>
+                <div class="upload-subtext" style="font-size: 0.875rem; margin-top: 0.5rem;">
+                    Supported formats: PDF, JPG, PNG, DOC • Maximum size: 20MB
+                </div>
+                <input type="file" id="fileInput" name="file" class="file-input" 
+                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="displayFileInfo()">
+                <button type="button" class="browse-button" onclick="document.getElementById('fileInput').click()">
+                    Browse Files
+                </button>
+            </div>
+
+            <div id="fileInfo" class="file-info" style="display: none;">
+                <strong>Selected File:</strong>
+                <div id="selectedFiles"></div>
+            </div>
+
+            <button type="submit" class="upload-button" id="uploadButton" disabled>
+                Upload Document
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function displayFileInfo() {
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const selectedFiles = document.getElementById('selectedFiles');
+            const uploadButton = document.getElementById('uploadButton');
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                selectedFiles.innerHTML = `
+                    <div class="selected-file">
+                        <div class="file-details">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                        </div>
+                    </div>
+                `;
+                fileInfo.style.display = 'block';
+                uploadButton.disabled = false;
+            } else {
+                fileInfo.style.display = 'none';
+                uploadButton.disabled = true;
+            }
+        }
+
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const fileInput = document.getElementById('fileInput');
+            fileInput.files = e.dataTransfer.files;
+            displayFileInfo();
+        });
+    </script>
+</body>
+</html>
